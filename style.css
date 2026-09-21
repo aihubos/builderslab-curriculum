@@ -2,3 +2,4 @@
 
 .step strong{white-space:nowrap}.step{grid-template-columns:22px 1fr 18px;gap:4px 5px}.step strong{font-size:17px}@media(max-width:1000px){.step{padding-left:15px;padding-right:15px}.step strong{font-size:16px}}
 .hero>*{min-width:0}.hero-art{overflow:hidden}.art-caption{bottom:0}@media(max-width:700px){.hero{grid-template-columns:minmax(0,1fr)}.hero-art{width:100%}.step4{right:0}.step3{right:13%}.step2{right:26%}.step1{right:39%}h1{font-size:clamp(30px,9.5vw,39px)}}
+h1,h2,h3,p,.outcome strong,.topics li{word-break:keep-all;overflow-wrap:break-word}
