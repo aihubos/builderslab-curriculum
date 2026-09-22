@@ -77,6 +77,12 @@ assistant-rules.txt를 읽고 이번 작업에 적용해줘.
 
 같은 규칙과 새 가상 메모로 다시 실행합니다. 발송·메신저·예약을 연결하기 전에 현재 한 작업을 두 번 독립 수행했는지 확인합니다.
 
+## 실습 후 게임
+
+https://aihubos.github.io/builderslab-curriculum/mission-hermes.html
+
+6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 힌트·오답 재도전이 가능합니다. 실습 결과도 직접 확인하세요.
+
 ## 기록
 
 결과 파일 위치:

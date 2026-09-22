@@ -241,3 +241,9 @@ GET UNSTUCK
 
 ## 안내의 기준
 공식 문서 확인: 2026-09-22. 앱 이름·메뉴·설치 조건이 바뀌면 공식 안내를 우선 확인하세요. 설치 화면을 재현한 그림은 사용하지 않았습니다.OpenAI 공식 시작 안내 ↗ (https://learn.chatgpt.com/docs/quickstart)Windows 안내 ↗ (https://learn.chatgpt.com/docs/app/windows)데스크톱 앱 안내 ↗ (https://learn.chatgpt.com/docs/app)
+
+
+
+## 마지막 게임 도전
+https://aihubos.github.io/builderslab-curriculum/mission-start.html
+6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 실제 실습 결과도 직접 확인합니다.

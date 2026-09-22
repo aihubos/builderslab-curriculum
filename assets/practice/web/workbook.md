@@ -317,6 +317,12 @@ my-profile.txt만 사용해서 output/my-page.html을 만들어줘.
 
 - 백업과 현재 파일을 구분하고 작은 화면을 확인했나요?
 
+## 마지막 게임 도전
+
+https://aihubos.github.io/builderslab-curriculum/mission-web.html
+
+6개 상황 미션을 모두 해결하면 보스를 클리어합니다. 힌트와 오답 재도전을 사용할 수 있어요. 실제 실습 결과도 직접 확인하세요.
+
 ## 진행자 메모
 
 - 처음에는 이미지·회원가입·배포를 추가하지 않고 한 페이지 완성을 돕습니다.

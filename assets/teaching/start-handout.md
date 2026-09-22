@@ -80,6 +80,12 @@ challenge.txt로 새 결과를 만드세요. 처음 요청부터 입력·출력�
 
 24시간 안에 공개 가능한 내 메모 5줄을 만들고 result-my.txt로 정리합니다. 다음 날 앱을 다시 열어 파일 위치와 요청 규칙을 설명합니다.
 
+## 실습 후 게임
+
+https://aihubos.github.io/builderslab-curriculum/mission-start.html
+
+6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 힌트·오답 재도전이 가능합니다. 실습 결과도 직접 확인하세요.
+
 ## 기록
 
 결과 파일 위치:

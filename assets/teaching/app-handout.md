@@ -82,6 +82,12 @@ localStorage 키는 my-todo-practice-v1. 읽은 데이터의 형식 확인과 �
 
 불편 하나를 골라 백업 후 수정합니다. 이전에 통과한 추가·완료·삭제·재열기가 그대로 되는지 확인합니다.
 
+## 실습 후 게임
+
+https://aihubos.github.io/builderslab-curriculum/mission-app.html
+
+6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 힌트·오답 재도전이 가능합니다. 실습 결과도 직접 확인하세요.
+
 ## 기록
 
 결과 파일 위치:

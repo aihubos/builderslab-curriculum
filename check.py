@@ -28,7 +28,8 @@ courses=json.loads((ROOT/'courses.json').read_text())
 books=json.loads((ROOT/'workbooks.json').read_text())
 names=['index','lesson','lessons']+[c['id'] for c in courses]+['lesson-'+b['id'] for b in books]
 names+=['ready','teaching','handouts']+['slides-'+c['id'] for c in courses]
-assert len(names)==23 and len(set(names))==23
+names+=['missions']+['mission-'+c['id'] for c in courses]
+assert len(names)==30 and len(set(names))==30
 names+=['assets/practice/web/example/index','assets/practice/app/example/index']
 pages={name+'.html':Page(ROOT/(name+'.html')) for name in names}
 for name,page in pages.items():
@@ -84,13 +85,13 @@ for p in plans:
     assert len(p['concepts'])==3 and len(p['assignment']['rubric'])==4
     assert all(len(row)==4 for row in p['assignment']['rubric'])
     lesson=pages['lesson.html' if slug=='start' else 'lesson-'+slug+'.html']
-    assert {'learning-goals','assignment'}<=lesson.ids
+    assert {'learning-goals','assignment','mission'}<=lesson.ids
     for ext in ['slides.pptx','slides.pdf','workbook.pdf','challenge.txt','worksheet.md']:
         assert (ROOT/'assets/teaching'/f'{slug}-{ext}').stat().st_size>0
     with ZipFile(ROOT/'assets/teaching'/f'{slug}-slides.pptx') as z:
         slide_names=[n for n in z.namelist() if re.fullmatch(r'ppt/slides/slide\d+\.xml',n)]
         notes=[n for n in z.namelist() if re.fullmatch(r'ppt/notesSlides/notesSlide\d+\.xml',n)]
-        assert len(slide_names)==len(notes)==16,(slug,len(slide_names),len(notes))
+        assert len(slide_names)==len(notes)==17,(slug,len(slide_names),len(notes))
         from teaching import slides_for
         c=next(c for c in courses if c['id']==slug)
         for i,slide in enumerate(slides_for(c),1):
@@ -104,7 +105,7 @@ with ZipFile(ROOT/'assets/teaching/classroom-kit.zip') as z:
     for p in plans:
         name=f"practice/{p['id']}-practice.zip"
         assert z.read(name)==(ROOT/'assets/downloads'/Path(name).name).read_bytes()
-print('PASS: 23 pages + 2 examples, 53 steps, 6 original assignments, rubric/agenda, 96 slides with notes, PDF and current ZIP bundles')
+print('PASS: 30 pages + 2 examples, 53 steps, 6 original assignments, rubric/agenda, 102 slides with notes, PDF and current ZIP bundles')
 
 with ZipFile(ROOT/'assets/teaching/student-handouts.zip') as z:
     assert z.testzip() is None
@@ -114,3 +115,21 @@ with ZipFile(ROOT/'assets/teaching/student-handouts.zip') as z:
         md=z.read(p['id']+'-handout.md').decode()
         assert p['assignment']['answer'] not in md and '모범 답안' not in md
 print('PASS: student-only handout archive excludes instructor notes and answer keys')
+missions=json.loads((ROOT/'missions.json').read_text())
+assert [m['id'] for m in missions]==[c['id'] for c in courses]
+for m in missions:
+    lesson=pages['lesson.html' if m['id']=='start' else 'lesson-'+m['id']+'.html']
+    assert len(m['questions'])==6 and len({q['id'] for q in m['questions']})==6
+    assert [q.get('boss',False) for q in m['questions']]==[False]*5+[True]
+    for q in m['questions']:
+        assert len(q['options'])==4 and len(set(q['options']))==4
+        assert isinstance(q['answer'],int) and 0<=q['answer']<4
+        assert q['hint'] and q['explain'] and q['anchor'] in lesson.ids
+    for page in [m['id']+'.html','lesson.html' if m['id']=='start' else 'lesson-'+m['id']+'.html','handouts.html','teaching.html']:
+        assert f'mission-{m["id"]}.html' in (ROOT/page).read_text()
+    uri=f'https://aihubos.github.io/builderslab-curriculum/mission-{m["id"]}.html'
+    for suffix in ['handout','workbook']:
+        assert ('/URI ('+uri+')').encode() in (ROOT/'assets/teaching'/f'{m["id"]}-{suffix}.pdf').read_bytes()
+for name in ['game','engine','monsters','data']:
+    subprocess.run(['node','--check',str(ROOT/'assets/league'/f'{name}.mjs')],check=True)
+subprocess.run(['node',str(ROOT/'check-missions.mjs')],check=True)

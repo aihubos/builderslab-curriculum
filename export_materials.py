@@ -35,7 +35,9 @@ styles={
 'cell':ParagraphStyle('cell',fontName='Classroom',fontSize=8.5,leading=13,textColor=INK,wordWrap='CJK')
 }
 def P(text,style='body'):
-    return Paragraph(escape(str(text)).replace('\n','<br/>'),styles[style])
+    safe=escape(str(text))
+    safe=re.sub(r'https?://[^\s<>]+',lambda match:f'<link href="{match[0]}" color="#326390">{match[0]}</link>',safe)
+    return Paragraph(safe.replace('\n','<br/>'),styles[style])
 def bullets(items):
     return [P('• '+t) for t in items]
 def page_decor(canvas,doc):
@@ -80,7 +82,7 @@ def assessment_story(plan):
     rows += [[P(x,'cell') for x in row] for row in a['rubric']]
     table=Table(rows,colWidths=[76,135,110,186],repeatRows=1,hAlign='LEFT')
     table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#eaffbe')),('VALIGN',(0,0),(-1,-1),'TOP'),('BOX',(0,0),(-1,-1),.5,colors.HexColor('#dce3eb')),('INNERGRID',(0,0),(-1,-1),.4,colors.HexColor('#dce3eb')),('LEFTPADDING',(0,0),(-1,-1),8),('RIGHTPADDING',(0,0),(-1,-1),8),('TOPPADDING',(0,0),(-1,-1),9),('BOTTOMPADDING',(0,0),(-1,-1),9)]))
-    story+=[table,Spacer(1,18),P('모범 확인 기준 · 먼저 독립 수행한 뒤 읽으세요','h3'),P(a['answer']),P('수업 후 내 일에 적용하기','h3'),P(plan['transfer']),P('마지막 질문','h3'),P(plan['exit']),PageBreak(),P('내 실행·피드백 기록지','h2')]
+    story+=[table,Spacer(1,18),P('모범 확인 기준 · 먼저 독립 수행한 뒤 읽으세요','h3'),P(a['answer']),P('수업 후 내 일에 적용하기','h3'),P(plan['transfer']),P('마지막 질문','h3'),P(plan['exit']),P('마지막 게임 도전','h3'),P('6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 힌트와 오답 재도전을 사용할 수 있습니다. 실제 실습 결과와 게임 기록을 함께 보여주세요.'),P('https://aihubos.github.io/builderslab-curriculum/mission-'+plan['id']+'.html','small'),PageBreak(),P('내 실행·피드백 기록지','h2')]
     for label in ['오늘의 입력과 출력 파일','내가 직접 작성한 요청','기대한 결과 / 실제 결과','검사한 근거와 미확인 항목','잘된 점 하나 / 다음에 고칠 행동 하나','다시 확인한 결과 / 다음 복습 날짜']:
         story += [P(label,'h3'),P('________________________________________________________________\n\n________________________________________________________________','small'),Spacer(1,9)]
     return story
@@ -122,6 +124,11 @@ def text_box(slide,x,y,w,h,text,size,color='071126',bold=False):
     for i,line in enumerate(text.split('\n')):
         para=tf.paragraphs[0] if i==0 else tf.add_paragraph()
         para.text=line;para.font.name='맑은 고딕';para.font.size=Pt(size);para.font.bold=bold;para.font.color.rgb=RGBColor.from_string(color);para.space_after=Pt(9);para.line_spacing=1.22
+        link=re.search(r'https?://\S+',line)
+        if link:
+            shape.click_action.hyperlink.address=link[0]
+            para.runs[0].font.color.rgb=RGBColor.from_string(color)
+            para.runs[0].font.underline=True
     return shape
 
 def export_slides(c):
@@ -154,7 +161,7 @@ def instructor():
             end=elapsed+row['minutes']
             story += [P(f'{elapsed}–{end}분 / '+row['title'],'h3'),P('교재 '+row['steps']+' · '+row['activity']),P('강사 발문: “'+row['script']+'”'),P('관찰 기준: '+row['checkpoint'],'small')]
             elapsed=end
-        story += [P('오개념 교정','h3'),P(p['pitfall']['bad']),P(p['pitfall']['why']+' '+p['pitfall']['fix']),P('도움 순서','h3'),*bullets(p['rescue']),P('독립 과제 확인 답','h3'),P(p['assignment']['answer']),P('마지막 질문','h3'),P(p['exit'])]
+        story += [P('오개념 교정','h3'),P(p['pitfall']['bad']),P(p['pitfall']['why']+' '+p['pitfall']['fix']),P('도움 순서','h3'),*bullets(p['rescue']),P('독립 과제 확인 답','h3'),P(p['assignment']['answer']),P('마지막 질문','h3'),P(p['exit']),P('마무리 게임: https://aihubos.github.io/builderslab-curriculum/mission-'+c['id']+'.html','small'),P('게임에서 6개 상황 판단을 모두 해결하게 합니다. 오답은 해설과 재도전으로 이해를 확인하세요. 실제 실습 결과와 게임 클리어를 함께 확인하며, 게임 통과가 기기 설치나 결과 파일의 실제 검증을 대신하지 않습니다.','small')]
     pdf(OUT/'instructor-guide.pdf',story,'AI 빌더스랩 · 현장 강의 운영안')
 
 
@@ -168,7 +175,7 @@ def handout_story(c):
     url='https://aihubos.github.io/builderslab-curriculum/'+('lesson.html' if slug=='start' else 'lesson-'+slug+'.html')
     story=[Image(str(ROOT/'assets/builders-lab-logo.png'),width=156,height=52),Spacer(1,18),P('CLASS '+c['number']+' / 수강생 공유용 · 1. 준비와 이해','small'),P(c['title'],'h1'),P(p['promise']),P('오늘 할 수 있게 될 일','h3'),*bullets(p['objectives']),P('시작 전에','h3'),P(p['prep'])]
     for x in p['concepts']:story += [P(x['title'],'h3'),P(x['example'],'small')]
-    story += [P('설치·폴더 선택부터 자세히 따라 하려면','h3'),P(url,'small'),PageBreak(),P('2. 내 컴퓨터에서 실행하기','h2'),*bullets(['과정 ZIP을 다운로드하고 압축을 풉니다. START-HERE.txt가 있는 폴더를 엽니다.','교재에서 앞 단계를 마친 후 아래 대표 요청을 보냅니다. Hermes 과정은 Hermes에, 나머지 과정은 Codex에 입력합니다.','작업이 끝나면 실제 결과 파일이나 앱을 열어 확인합니다. 아래 요청은 앞 단계의 설치·폴더 준비를 건너뛰는 명령이 아닙니다.']),P('대표 실습 요청 · 파일 이름을 확인한 뒤 사용','h3'),P(handout_prompt(slug),'prompt'),P('직접 확인할 것','h3'),*bullets(c['completion']),P('막히면 네 줄로 설명해요','h3'),P('막힌 단계: ____ / 내가 한 행동: ____\n기대한 결과: ____ / 실제 결과·오류 문구: ____','prompt'),PageBreak(),P('3. 새 자료로 혼자 해보기','h2'),P(a['title'],'h3'),P(a['task']),P(a['input'],'prompt'),P('완료 후 보여줄 것','h3'),*bullets(a['deliverables']),P('내일 한 번 더','h3'),P(p['transfer']),P('나의 기록','h3'),P('결과 파일 위치: _________________________________\n잘된 점: _______________________________________\n다음에 고칠 행동: _______________________________\n다시 해볼 날짜: _________________________________'),P('전체 순서와 문제 해결: '+url,'small')]
+    story += [P('설치·폴더 선택부터 자세히 따라 하려면','h3'),P(url,'small'),PageBreak(),P('2. 내 컴퓨터에서 실행하기','h2'),*bullets(['과정 ZIP을 다운로드하고 압축을 풉니다. START-HERE.txt가 있는 폴더를 엽니다.','교재에서 앞 단계를 마친 후 아래 대표 요청을 보냅니다. Hermes 과정은 Hermes에, 나머지 과정은 Codex에 입력합니다.','작업이 끝나면 실제 결과 파일이나 앱을 열어 확인합니다. 아래 요청은 앞 단계의 설치·폴더 준비를 건너뛰는 명령이 아닙니다.']),P('대표 실습 요청 · 파일 이름을 확인한 뒤 사용','h3'),P(handout_prompt(slug),'prompt'),P('직접 확인할 것','h3'),*bullets(c['completion']),P('막히면 네 줄로 설명해요','h3'),P('막힌 단계: ____ / 내가 한 행동: ____\n기대한 결과: ____ / 실제 결과·오류 문구: ____','prompt'),PageBreak(),P('3. 새 자료로 혼자 해보기','h2'),P(a['title'],'h3'),P(a['task']),P(a['input'],'prompt'),P('완료 후 보여줄 것','h3'),*bullets(a['deliverables']),P('내일 한 번 더','h3'),P(p['transfer']),P('나의 기록','h3'),P('결과 파일 위치: _________________________________\n잘된 점: _______________________________________\n다음에 고칠 행동: _______________________________\n다시 해볼 날짜: _________________________________'),P('실습 후 게임: https://aihubos.github.io/builderslab-curriculum/mission-'+slug+'.html\n상세 실습: '+url,'small')]
     return story
 
 def export_handouts():
@@ -180,7 +187,7 @@ def export_handouts():
         all_story.extend(handout_story(c))
         md=['# '+c['title']+' · 수강생 공유용',p['promise'],'## 오늘의 목표',*['- '+x for x in p['objectives']],'## 준비',p['prep']]
         for x in p['concepts']:md+=['### '+x['title'],x['example']]
-        md+=['## 대표 실습 요청','앞 단계의 설치·폴더 준비를 마친 후 사용합니다.','```text',handout_prompt(slug),'```','## 결과 확인',*['- '+x for x in c['completion']],'## 혼자 해보기',a['title'],a['task'],'```text',a['input'],'```','## 보여줄 결과',*['- '+x for x in a['deliverables']],'## 복습',p['transfer'],'## 기록','결과 파일 위치:\n잘된 점:\n다음에 고칠 행동:\n다시 해볼 날짜:']
+        md+=['## 대표 실습 요청','앞 단계의 설치·폴더 준비를 마친 후 사용합니다.','```text',handout_prompt(slug),'```','## 결과 확인',*['- '+x for x in c['completion']],'## 혼자 해보기',a['title'],a['task'],'```text',a['input'],'```','## 보여줄 결과',*['- '+x for x in a['deliverables']],'## 복습',p['transfer'],'## 실습 후 게임','https://aihubos.github.io/builderslab-curriculum/mission-'+slug+'.html','6개 상황 미션을 모두 해결하고 보스를 클리어하세요. 힌트·오답 재도전이 가능합니다. 실습 결과도 직접 확인하세요.','## 기록','결과 파일 위치:\n잘된 점:\n다음에 고칠 행동:\n다시 해볼 날짜:']
         (OUT/f'{slug}-handout.md').write_text('\n\n'.join(md)+'\n')
     pdf(OUT/'student-handouts.pdf',all_story,'AI 빌더스랩 · 수강생 공유용 요약 교재')
 

@@ -2,6 +2,29 @@
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
 const announce = message => { $('#action-status').textContent = message; };
+let missionEngine;
+let refreshLesson = () => {};
+function gameRecord(slug) {
+  try { return missionEngine.readRecord(localStorage.getItem(missionEngine.storageKey(slug)), missionEngine.missionFor(slug)); }
+  catch { return null; }
+}
+function refreshMissions() {
+  $$('[data-mission-status]').forEach(node => {
+    const record = gameRecord(node.dataset.missionStatus);
+    node.textContent = !record ? '게임 기록을 읽지 못했어요. 게임에서 상태를 확인하세요.' : record.best ? `✦ 게임 클리어 · 최고 ${record.best.xp} XP` : `${record.run.mastered.length} / 6 미션 해결 · 모두 해결하면 클리어`;
+    node.classList.toggle('is-cleared', Boolean(record?.best));
+  });
+  refreshLesson();
+}
+if ($('[data-mission-status]')) {
+  import('./assets/league/engine.mjs').then(module => {
+    missionEngine = module;
+    refreshMissions();
+    window.addEventListener('pageshow', refreshMissions);
+    window.addEventListener('storage', refreshMissions);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshMissions(); });
+  }).catch(() => { $$('[data-mission-status]').forEach(node => { node.textContent = '게임 기록을 불러오지 못했어요. 게임 링크에서 다시 확인하세요.'; }); });
+}
 
 $$('[data-filter]').forEach(button => button.addEventListener('click', () => {
   $$('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
@@ -44,13 +67,20 @@ if ($('#progress')) {
   function render() {
     const count = checks.filter(input => input.checked).length;
     $('#progress').value = count;
-    $('#progress-label').textContent = `${count} / ${checks.length} 완료`;
+    $('#progress-label').textContent = `${count} / ${checks.length} 실습 확인`;
     $('#lesson-complete').hidden = count !== checks.length;
     checks.forEach(input => input.closest('.lesson-step').classList.toggle('is-complete', input.checked));
     $$('[data-os-choice]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.osChoice === selectedOS)));
     $$('[data-os]').forEach(panel => { panel.hidden = panel.dataset.os !== selectedOS; });
     $('#os-status').textContent = `${selectedOS === 'mac' ? 'Mac' : 'Windows'} 기준 안내입니다.`;
     $('#storage-status').textContent = storageAvailable ? '이 브라우저에만 저장됩니다.' : '저장할 수 없어 현재 화면에서만 유지됩니다.';
+    if ($('[data-course-finish-title]')) {
+      const clear = Boolean(gameRecord(lessonId)?.best);
+      $('[data-course-finish-title]').textContent = clear ? '실습 확인과 게임 클리어를 모두 마쳤어요.' : '기본 실습 확인을 마쳤어요. 이제 마지막 게임!';
+      $('[data-course-finish-copy]').textContent = clear ? '독립 과제의 실제 결과도 강사에게 보여주세요. 배운 내용을 다른 자료로 다시 사용해보세요.' : '독립 과제의 결과를 확인한 뒤 6개 게임 미션을 해결하면 이 과정을 마무리해요.';
+      $('[data-course-finish-link]').textContent = clear ? '다른 과정 살펴보기 ↗' : '마지막 게임 도전하기 ↓';
+      $('[data-course-finish-link]').href = clear ? 'lessons.html' : '#mission';
+    }
   }
   function save() {
     try {
@@ -70,6 +100,7 @@ if ($('#progress')) {
     $('#reset-progress').focus();
     announce('완료 표시를 초기화했습니다.');
   });
+  refreshLesson = render;
   render();
 }
 

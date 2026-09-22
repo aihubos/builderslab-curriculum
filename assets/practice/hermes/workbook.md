@@ -349,6 +349,12 @@ assistant-rules.txt 기준으로 input/not-exist.txt를 정리해줘.
 
 - 없는 파일을 지어내지 않고 멈췄나요?
 
+## 마지막 게임 도전
+
+https://aihubos.github.io/builderslab-curriculum/mission-hermes.html
+
+6개 상황 미션을 모두 해결하면 보스를 클리어합니다. 힌트와 오답 재도전을 사용할 수 있어요. 실제 실습 결과도 직접 확인하세요.
+
 ## 진행자 메모
 
 - 기종과 기존 구독 연결을 실습 시작 전에 확인합니다. 인증은 학생이 직접 진행합니다.

@@ -269,6 +269,12 @@ sources/05-my-note.txt를 새 자료로 등록하고 별도 노트·원문 링�
 
 - 요약에서 원문으로 돌아갈 수 있나요?
 
+## 마지막 게임 도전
+
+https://aihubos.github.io/builderslab-curriculum/mission-wiki.html
+
+6개 상황 미션을 모두 해결하면 보스를 클리어합니다. 힌트와 오답 재도전을 사용할 수 있어요. 실제 실습 결과도 직접 확인하세요.
+
 ## 진행자 메모
 
 - S4는 충돌 연습 전까지 읽히지 않습니다.
