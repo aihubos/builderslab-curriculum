@@ -1,18 +1,76 @@
-const filters = [...document.querySelectorAll('[data-filter]')];
-const cards = [...document.querySelectorAll('[data-stage]')];
-function selectStage(stage) {
-  filters.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === stage)));
-  cards.forEach(card => { card.hidden = stage !== 'all' && card.dataset.stage !== stage; });
-  document.querySelector('#result-count').textContent = `${filters.find(button => button.dataset.filter === stage).textContent.replace('9', '').trim()} · ${cards.filter(card => !card.hidden).length}개 분반`;
+'use strict';
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const announce = message => { $('#action-status').textContent = message; };
+
+$$('[data-filter]').forEach(button => button.addEventListener('click', () => {
+  $$('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  $$('[data-group]').forEach(card => { card.hidden = button.dataset.filter !== 'all' && card.dataset.group !== button.dataset.filter; });
+  $('#count').textContent = `${$$('[data-group]').filter(card => !card.hidden).length}개 과정`;
+}));
+
+$$('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+  const source = document.getElementById(button.dataset.copy);
+  const original = button.textContent;
+  try {
+    await navigator.clipboard.writeText(source.textContent);
+    button.textContent = '복사했어요 ✓';
+    announce('요청문을 복사했습니다. Codex 입력창에 붙여 넣으세요.');
+  } catch {
+    const range = document.createRange();
+    range.selectNodeContents(source);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    button.textContent = '선택된 글을 직접 복사하세요';
+    announce('자동 복사가 제한되어 글을 선택했습니다. Windows는 Ctrl+C, Mac은 Command+C로 복사하세요.');
+  }
+  setTimeout(() => { button.textContent = original; }, 4000);
+}));
+
+if ($('#progress')) {
+  const lessonId = document.querySelector('main').dataset.lessonId || 'start';
+  const key = lessonId === 'start' ? 'builderslab-codex-lesson-v1' : `builderslab-${lessonId}-lesson-v1`;
+  const checks = $$('[data-complete]');
+  let selectedOS = 'windows';
+  let storageAvailable = true;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '{}');
+    if (saved && typeof saved === 'object') {
+      selectedOS = saved.os === 'mac' ? 'mac' : 'windows';
+      if (Array.isArray(saved.completed)) checks.forEach(input => { input.checked = saved.completed.includes(input.dataset.complete); });
+    }
+  } catch { storageAvailable = false; }
+  function render() {
+    const count = checks.filter(input => input.checked).length;
+    $('#progress').value = count;
+    $('#progress-label').textContent = `${count} / ${checks.length} 완료`;
+    $('#lesson-complete').hidden = count !== checks.length;
+    checks.forEach(input => input.closest('.lesson-step').classList.toggle('is-complete', input.checked));
+    $$('[data-os-choice]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.osChoice === selectedOS)));
+    $$('[data-os]').forEach(panel => { panel.hidden = panel.dataset.os !== selectedOS; });
+    $('#os-status').textContent = `${selectedOS === 'mac' ? 'Mac' : 'Windows'} 기준 안내입니다.`;
+    $('#storage-status').textContent = storageAvailable ? '이 브라우저에만 저장됩니다.' : '저장할 수 없어 현재 화면에서만 유지됩니다.';
+  }
+  function save() {
+    try {
+      localStorage.setItem(key, JSON.stringify({os: selectedOS, completed: checks.filter(input => input.checked).map(input => input.dataset.complete)}));
+      storageAvailable = true;
+    } catch { storageAvailable = false; }
+    render();
+  }
+  checks.forEach(input => input.addEventListener('change', save));
+  $$('[data-os-choice]').forEach(button => button.addEventListener('click', () => { selectedOS = button.dataset.osChoice; save(); }));
+  $('#reset-progress').addEventListener('click', () => { $('#reset-confirm').hidden = false; $('#cancel-reset').focus(); });
+  $('#cancel-reset').addEventListener('click', () => { $('#reset-confirm').hidden = true; $('#reset-progress').focus(); });
+  $('#confirm-reset').addEventListener('click', () => {
+    checks.forEach(input => { input.checked = false; });
+    save();
+    $('#reset-confirm').hidden = true;
+    $('#reset-progress').focus();
+    announce('완료 표시를 초기화했습니다.');
+  });
+  render();
 }
-filters.forEach(button => button.addEventListener('click', () => selectStage(button.dataset.filter)));
-document.querySelectorAll('[data-pick]').forEach(link => link.addEventListener('click', () => selectStage(link.dataset.pick)));
-let printState;
-window.addEventListener('beforeprint', () => {
-  printState = cards.map(card => ({hidden: card.hidden, open: card.querySelector('details').open}));
-  cards.forEach(card => { card.hidden = false; card.querySelector('details').open = true; });
-});
-window.addEventListener('afterprint', () => {
-  if (printState) cards.forEach((card, i) => { card.hidden = printState[i].hidden; card.querySelector('details').open = printState[i].open; });
-});
-document.querySelector('#print').addEventListener('click', () => window.print());
+
+$$('[data-print]').forEach(button => button.addEventListener('click', () => window.print()));
