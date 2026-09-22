@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit, unquote
 import json
+import re
 import subprocess
 from zipfile import ZipFile
 
@@ -26,7 +27,8 @@ class Page(HTMLParser):
 courses=json.loads((ROOT/'courses.json').read_text())
 books=json.loads((ROOT/'workbooks.json').read_text())
 names=['index','lesson','lessons']+[c['id'] for c in courses]+['lesson-'+b['id'] for b in books]
-assert len(names)==14 and len(set(names))==14
+names+=['ready','teaching','handouts']+['slides-'+c['id'] for c in courses]
+assert len(names)==23 and len(set(names))==23
 names+=['assets/practice/web/example/index','assets/practice/app/example/index']
 pages={name+'.html':Page(ROOT/(name+'.html')) for name in names}
 for name,page in pages.items():
@@ -42,17 +44,15 @@ for name,page in pages.items():
         assert old not in text,(name,old)
 for c in courses:
     media=c['media']
-    assert all((ROOT/media[k]).is_file() for k in ('src','poster','original'))
-    assert media['source'].startswith('https://')
+    assert media['kind']=='original' and not media['placeholder']
+    assert (ROOT/media['poster']).is_file()
     text=(ROOT/f"{c['id']}.html").read_text()
-    assert '<video controls playsinline preload="none"' in text
-    assert 'autoplay' not in text
-    assert media['src'] in text and media['poster'] in text
-    assert '교체용 참고 영상' in text if media['placeholder'] else '과정 예시 영상' in text
+    assert '<video' not in text and 'assets/demos/' not in text
+    assert media['poster'] in text and 'BUILDERS LAB ORIGINAL' in text
 lesson=pages['lesson.html']
 assert lesson.checks==list('1234567')
 assert all(i in lesson.ids for i in lesson.copies)
-assert len(lesson.downloads)==5
+assert len(lesson.downloads)>=8
 assert '수진' in (ROOT/'assets/memo-02.txt').read_text()
 assert '미정이라고' in (ROOT/'assets/request-template.txt').read_text()
 for old in ('setup','website','dashboard','game','report'):
@@ -75,4 +75,42 @@ with ZipFile(ROOT/'assets/downloads/all-practice.zip') as bundle:
 assert sum(len(b['steps']) for b in books)+7==53
 subprocess.run(['node','--check',str(ROOT/'assets/practice/app/example/app.js')],check=True)
 subprocess.run(['node',str(ROOT/'check-todo.cjs')],check=True)
-print('PASS: 14 learning pages + 2 examples, links, 53 steps, copies, 6 ZIP packs, progress IDs, JS and storage failure checks')
+plans=json.loads((ROOT/'teaching.json').read_text())
+assert [p['id'] for p in plans]==[c['id'] for c in courses]
+from xml.etree import ElementTree as ET
+for p in plans:
+    slug=p['id']
+    assert sum(x['minutes'] for x in p['agenda'])==p['minutes']
+    assert len(p['concepts'])==3 and len(p['assignment']['rubric'])==4
+    assert all(len(row)==4 for row in p['assignment']['rubric'])
+    lesson=pages['lesson.html' if slug=='start' else 'lesson-'+slug+'.html']
+    assert {'learning-goals','assignment'}<=lesson.ids
+    for ext in ['slides.pptx','slides.pdf','workbook.pdf','challenge.txt','worksheet.md']:
+        assert (ROOT/'assets/teaching'/f'{slug}-{ext}').stat().st_size>0
+    with ZipFile(ROOT/'assets/teaching'/f'{slug}-slides.pptx') as z:
+        slide_names=[n for n in z.namelist() if re.fullmatch(r'ppt/slides/slide\d+\.xml',n)]
+        notes=[n for n in z.namelist() if re.fullmatch(r'ppt/notesSlides/notesSlide\d+\.xml',n)]
+        assert len(slide_names)==len(notes)==16,(slug,len(slide_names),len(notes))
+        from teaching import slides_for
+        c=next(c for c in courses if c['id']==slug)
+        for i,slide in enumerate(slides_for(c),1):
+            content=''.join(ET.fromstring(z.read(f'ppt/notesSlides/notesSlide{i}.xml')).itertext())
+            assert slide['notes'] in content,(slug,i)
+    with ZipFile(ROOT/'assets/downloads'/f'{slug}-practice.zip') as z:
+        assert z.read(f'practice-{slug}/challenge.txt').decode().strip()==p['assignment']['input']
+        assert z.read(f'practice-{slug}/classroom/{slug}-workbook.pdf')==(ROOT/'assets/teaching'/f'{slug}-workbook.pdf').read_bytes()
+with ZipFile(ROOT/'assets/teaching/classroom-kit.zip') as z:
+    assert z.testzip() is None
+    for p in plans:
+        name=f"practice/{p['id']}-practice.zip"
+        assert z.read(name)==(ROOT/'assets/downloads'/Path(name).name).read_bytes()
+print('PASS: 23 pages + 2 examples, 53 steps, 6 original assignments, rubric/agenda, 96 slides with notes, PDF and current ZIP bundles')
+
+with ZipFile(ROOT/'assets/teaching/student-handouts.zip') as z:
+    assert z.testzip() is None
+    assert len(z.namelist())==20
+    assert not any('slides' in n or 'instructor' in n or 'workbook' in n for n in z.namelist())
+    for p in plans:
+        md=z.read(p['id']+'-handout.md').decode()
+        assert p['assignment']['answer'] not in md and '모범 답안' not in md
+print('PASS: student-only handout archive excludes instructor notes and answer keys')

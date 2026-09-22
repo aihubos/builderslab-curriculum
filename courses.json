@@ -43,14 +43,11 @@
     ],
     "number": "01",
     "media": {
-      "src": "assets/demos/start.mp4",
-      "poster": "assets/demos/start.jpg",
-      "original": "assets/demos/start.avif",
-      "title": "설치 상태 확인",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/120059-1429/%E1%84%89%E1%85%A5%E1%86%AF%E1%84%8E%E1%85%B5%E1%84%89%E1%85%A1%E1%86%BC%E1%84%90%E1%85%A2-%E1%84%80%E1%85%A5%E1%86%B7%E1%84%8C%E1%85%B3%E1%86%BC.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/start.svg",
+      "title": "첫 자동화",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   },
   {
@@ -97,14 +94,11 @@
     ],
     "number": "02",
     "media": {
-      "src": "assets/demos/workflow.mp4",
-      "poster": "assets/demos/workflow.jpg",
-      "original": "assets/demos/workflow.avif",
-      "title": "브라우저 자동화",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/133652-1429/%E1%84%87%E1%85%B3%E1%84%85%E1%85%A1%E1%84%8B%E1%85%AE%E1%84%8C%E1%85%A5-%E1%84%8C%E1%85%A1%E1%84%83%E1%85%A9%E1%86%BC%E1%84%92%E1%85%AA-1.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/workflow.svg",
+      "title": "업무 템플릿",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   },
   {
@@ -151,14 +145,11 @@
     ],
     "number": "03",
     "media": {
-      "src": "assets/demos/wiki.mp4",
-      "poster": "assets/demos/wiki.jpg",
-      "original": "assets/demos/wiki.avif",
-      "title": "LLM Wiki 자료 정리",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/122742-1429/llm-wiki-r2.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/wiki.svg",
+      "title": "나의 지식 모음",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   },
   {
@@ -205,14 +196,11 @@
     ],
     "number": "04",
     "media": {
-      "src": "assets/demos/hermes.mp4",
-      "poster": "assets/demos/hermes.jpg",
-      "original": "assets/demos/hermes.avif",
-      "title": "AI 비서와 대화",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/114654-1429/%E1%84%8C%E1%85%A1%E1%84%87%E1%85%B5%E1%84%89%E1%85%B3.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/hermes.svg",
+      "title": "개인 AI 비서",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   },
   {
@@ -259,14 +247,11 @@
     ],
     "number": "05",
     "media": {
-      "src": "assets/demos/web.mp4",
-      "poster": "assets/demos/web.jpg",
-      "original": "assets/demos/web.avif",
-      "title": "웹 서비스 화면",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/105351-1429/slock-ai-1-r2.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/web.svg",
+      "title": "나의 홈페이지",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   },
   {
@@ -313,14 +298,11 @@
     ],
     "number": "06",
     "media": {
-      "src": "assets/demos/app.mp4",
-      "poster": "assets/demos/app.jpg",
-      "original": "assets/demos/app.avif",
-      "title": "오류 추적과 수정",
-      "source": "https://fastcampus.co.kr/biz_online_hermes",
-      "source_url": "https://cdn.day1company.io/prod/uploads/202604/122753-1429/%E1%84%87%E1%85%A5%E1%84%80%E1%85%B3%E1%84%8E%E1%85%AE%E1%84%8C%E1%85%A5%E1%86%A8%E1%84%92%E1%85%A1%E1%84%82%E1%85%B3%E1%86%AB%E1%84%86%E1%85%A9%E1%84%89%E1%85%B3%E1%86%B8-r2.avif",
-      "attribution": "패스트캠퍼스 · Hermes 과정 공개 데모",
-      "placeholder": true
+      "kind": "original",
+      "poster": "assets/previews/app.svg",
+      "title": "작은 할 일 앱",
+      "placeholder": false,
+      "attribution": "AI Builders Lab · 교육용 자체 예시"
     }
   }
 ]

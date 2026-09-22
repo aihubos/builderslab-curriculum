@@ -1,64 +1,62 @@
-# AI 빌더스랩 · 모임원 배움터
+# AI 빌더스랩 · 현장 실습 교실
 
-AI 입문자가 작은 반복 작업을 혼자 수행하도록 돕는 반응형 교육 사이트입니다. 기존 홈페이지의 과정·가격·장소·이미지는 사용하지 않습니다.
-
-## 실행
-
-```sh
-python3 build.py
-python3 check.py
-python3 -m http.server 4187 --bind 127.0.0.1
-```
-
-메인: http://127.0.0.1:4187/ · 첫 실습: http://127.0.0.1:4187/lesson.html
-
-## 구성과 수정
-
-- `courses.json`: 6개 과정의 단계·목표·목차·선행 조건·준비·완료 기준
-- `build.py`: 메인, 6개 상세 페이지, 첫 실습 페이지 생성
-- `lesson-content.html`: Windows·Mac 분기와 7단계 첫 실습 원문
-- `style.css`, `app.js`: 반응형 화면, 분류, 복사, 운영체제 선택, 완료 기록
-- `assets/memo-01.txt`, `memo-02.txt`, `request-template.txt`: 가상 실습 자료
-- `check.py`: 페이지 연결·앵커·실습 구성·이전 내용 제거 확인
-
-기존 생성 페이지 5개는 교체했습니다. 참고 원본 자료 폴더는 그대로 보존합니다. 각 과정 미리보기는 직접 작성한 교육용 결과 예시이며 실제 제품 화면이 아닙니다.
-
-6개 과정 모두 실습 교재를 제공합니다. 기본 단계는 총 53개이며 과정별 샘플·요청문·교재 다운로드와 홈페이지·할 일 앱 완성 예제를 포함합니다. 등록·결제·로그인·서버 API가 없고, 페이지 자체에서 AI를 실행하지 않습니다. 완료 체크와 운영체제 선택은 현재 브라우저의 과정별 `builderslab-<과정>-lesson-v1` 키(첫 과정은 `builderslab-codex-lesson-v1`)에 저장하며 초기화할 수 있습니다. 저장이 차단되면 현재 페이지에서만 동작하고 안내를 표시합니다.
-
-## 근거와 범위
-
-교육 주제 참고: 제공된 AI스터디 4기 분반 안내문 및 참고자료/강의페이지의 패스트캠퍼스·클래스101 자료. 유료 영상·교재와 성과 표현을 복제하지 않았습니다.
-
-설치·로그인 안내는 2026-09-22 다음 공식 문서를 확인해 작성했습니다.
-- https://learn.chatgpt.com/docs/quickstart
-- https://learn.chatgpt.com/docs/app
-- https://learn.chatgpt.com/docs/app/windows
-
-현재 공식 안내는 ChatGPT 데스크톱 앱에서 Codex를 선택하는 흐름을 포함합니다. 수강생의 앱 버전과 지원 환경은 수업 전에 확인해야 합니다. 실제 Windows·Mac 새 계정 설치를 수행한 것은 아닙니다.
+AI를 처음 쓰는 일반인을 위한 오프라인 교육 사이트입니다. 설치·파일 관리부터 도움이 필요한 학습자를 기준으로, 강사 시연 → 함께 실행 → 새 자료로 독립 수행 → 피드백을 구성했습니다.
 
 공개 주소: https://aihubos.github.io/builderslab-curriculum/
 
-GitHub Pages는 `main` 브랜치 루트에서 배포합니다. 교육 페이지 14개를 생성하며 참고 원본 자료 폴더는 로컬에 보존하고 업로드하지 않습니다.
+## 사용 안내
 
-- `workbooks.json`: 나머지 5개 과정의 실습 원문·공식 출처·강사 안내
-- `workbooks.py`: 교재·교재 모음·Markdown·ZIP 생성
-- `assets/practice/`: 직접 작성한 가상 샘플과 완성 예제
-- `assets/downloads/all-practice.zip`: 전체 교재 묶음. 압축을 푼 뒤 원하는 과정 ZIP도 압축 해제합니다.
+- 수강생 공유: handouts.html — 과정별 3쪽, 전체 18쪽 PDF와 수정 가능한 Markdown. 강사 메모·모범 답안 없음.
+- 상세 교재: lessons.html — 6개 과정·53개 기본 실습 단계, Windows/Mac 안내, 샘플·요청문·완료 기록.
+- 강사 자료실: teaching.html — 6개 진행안, 96장 웹 슬라이드, 편집 가능한 PPTX, 강사 운영 PDF.
+- 준비 안내: ready.html — 사전 준비와 출발점 점검.
+- 실습 과제: 각 교재의 독립 과제와 4항목 평가표, 세 단계 힌트, 모범 확인 기준, 복습 기록지.
 
-Hermes는 개인 컴퓨터 설치 및 기존 ChatGPT/Codex 구독 연결을 기준으로 작성했습니다. 공식 설치·Desktop·Quickstart 문서를 2026-09-22 확인했으며 실제 수강생 컴퓨터 설치와 구독 인증을 대신 수행한 것은 아닙니다. 각 교재의 공식 출처에서 최신 지원 환경을 확인할 수 있습니다.
+첫걸음·업무·지식·홈페이지 과정은 권장 150분, Hermes·작은 앱은 권장 180분으로 설계했습니다. 휴식 포함, 설치 준비 시간은 별도입니다. 실제 개설 일정·기간·정원·수강료를 확정한 공지가 아닙니다.
 
-## 2026-09-22 화면 개편 · 예시 영상 교체
+## 실행과 수정
 
-패스트캠퍼스의 큰 대표 비주얼·결과물 소개, 클래스101의 미디어 우선 배치·고정 과정 요약·챕터 목록을 참고했습니다. 두 사이트의 실제 공개 화면을 확인했으며 강의 가격·후기·실적은 가져오지 않았습니다.
+정적 사이트 생성에는 Python 표준 라이브러리만 필요합니다.
 
-`assets/demos/`에 과정별 교체용 미디어가 있습니다. `start`, `workflow`, `wiki`, `hermes`, `web`, `app` 각각 다음 3개 파일을 제공합니다.
+~~~sh
+python3 build.py
+python3 check.py
+python3 -m http.server 4187 --bind 127.0.0.1
+~~~
 
-- `.avif`: 패스트캠퍼스 Hermes 공개 소개 페이지의 원본 애니메이션 (보관용)
-- `.mp4`: 동일 데모를 재생·정지할 수 있게 변환한 영상. 음성 없음, 자동 재생 없음.
-- `.jpg`: 정지 미리보기 이미지
+교육 원문을 변경했다면 문서도 다시 생성합니다. 문서 생성에는 reportlab, python-pptx, LibreOffice(soffice)가 필요합니다. 새로운 의존성을 사이트 방문자가 설치할 필요는 없습니다.
 
-가장 쉬운 교체 방법: 같은 이름의 `.mp4`와 `.jpg`를 본인 영상·대표 이미지로 덮어쓰고 브라우저를 새로고침합니다. 다른 파일명을 쓰려면 `courses.json`의 해당 과정 `media.src`와 `media.poster`를 수정한 뒤 `python3 build.py`를 실행합니다. 원본 파일 주소는 `media.source_url`, 출처 페이지는 `media.source`에 기록되어 있습니다.
+~~~sh
+python3 export_materials.py
+python3 build.py
+python3 check.py
+~~~
 
-자체 영상으로 바꾼 뒤에는 `media.placeholder`를 `false`로, `media.title`, `media.attribution`, `media.source`를 실제 내용과 출처로 변경하세요. 미디어는 16:10 근처의 가로 영상을 권장하며 다른 비율도 전체 내용이 보이도록 표시됩니다. 과거 원본 `.avif`는 재생에 사용하지 않습니다.
+문서용 한글 글꼴 기본값은 macOS AppleGothic입니다. 다른 환경에서는 CLASSROOM_FONT에 한글을 포함한 TrueType 파일 경로를 지정합니다. PPTX에는 맑은 고딕을 지정하며, macOS LibreOffice 변환 시 시스템 한글 글꼴을 사용하도록 설정합니다. PDF는 글꼴이 포함된 배포본입니다. 생성된 파일은 assets/teaching에 있습니다.
 
-현재 데모는 우리 교육 결과물이 아닌 외부 강의 참고 예시이며 화면에 구분 표시했습니다. 클래스101 영상은 스트리밍 방식이라 추출하지 않았습니다. 외부 자료의 재배포 허락을 확인한 것은 아닙니다. 자체 자료로 교체할 때 위 파일과 출처 표시를 함께 수정하세요.
+## 원본과 생성물
+
+- courses.json: 과정 소개·목차·선행 조건·결과물.
+- lesson-content.html: 첫걸음 7단계 원문.
+- workbooks.json: 다른 5개 과정의 46단계 원문.
+- teaching.json: 목표·핵심 개념·현장 시간표·강사 발문·새 과제·평가표·복습.
+- build.py, workbooks.py, teaching.py: 23개 교육 웹페이지와 다운로드 묶음 생성.
+- export_materials.py: 상세 PDF 6개, 요약 PDF 6개와 합본, 강사 운영안, PPTX 6개와 슬라이드 PDF 생성.
+- assets/practice: 직접 작성한 가상 샘플, 비교 자료, 홈페이지·할 일 앱 완성 예제.
+- assets/previews: 직접 작성한 교육용 결과 예시.
+- assets/downloads: 과정별 실습 묶음. ZIP 루트의 challenge.txt가 독립 과제 입력입니다.
+- assets/teaching/student-handouts.zip: 수강생 요약 전용 공유 묶음.
+- assets/teaching/classroom-kit.zip: 강사 전체 자료 묶음. 정답·강사 메모 포함.
+- check.py: 생성 페이지·연결·53단계·과제·시간표 합계·슬라이드 메모·ZIP 최신 파일 검증.
+
+외부 강의의 이전 참고 영상은 사이트에서 제거하고 로컬 참고자료 폴더에 보관했습니다. 참고 원본 자료와 output 검증 이미지는 GitHub에 올리지 않습니다. 로고는 사용자가 제공한 원본입니다.
+
+## 운영 범위
+
+페이지 자체에서 AI를 실행하거나 결제·등록·수강생 정보를 수집하지 않습니다. GitHub Pages의 main 브랜치 루트에서 배포합니다. 모든 웹 자료와 링크는 공개 자료이며, 강사 자료실도 접근 제한 기능이 없습니다.
+
+완료 기록은 현재 브라우저의 과정별 키에 저장됩니다. 첫걸음은 builderslab-codex-lesson-v1, 다른 과정은 builderslab-과정-lesson-v1입니다. 초기화는 해당 과정의 체크만 지웁니다. 준비 점검의 체크는 저장하지 않습니다.
+
+Hermes는 개인 컴퓨터 설치와 기존 ChatGPT/Codex 구독 인증 기준입니다. OpenAI와 Hermes 공식 안내를 2026-09-22 확인했습니다. 공식 출처는 각 교재에 있습니다. 지원 기기와 계정 접근, 수강생별 실제 설치·인증은 수업 전에 강사가 확인해야 합니다.
+
+샘플·과제·목표·평가표는 자체 작성했습니다. 웹·앱 완성 예제와 인쇄·슬라이드 파일을 직접 확인했고, AI 모델의 출력 문장이 매번 동일함을 보장하지 않습니다. 강사는 제공된 진행안으로 수업 전 리허설을 합니다.

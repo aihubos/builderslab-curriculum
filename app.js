@@ -15,7 +15,7 @@ $$('[data-copy]').forEach(button => button.addEventListener('click', async () =>
   try {
     await navigator.clipboard.writeText(source.textContent);
     button.textContent = '복사했어요 ✓';
-    announce('요청문을 복사했습니다. Codex 입력창에 붙여 넣으세요.');
+    announce('요청문을 복사했습니다. 사용할 앱의 입력창에 붙여 넣으세요.');
   } catch {
     const range = document.createRange();
     range.selectNodeContents(source);
@@ -74,3 +74,25 @@ if ($('#progress')) {
 }
 
 $$('[data-print]').forEach(button => button.addEventListener('click', () => window.print()));
+
+// A single keyboard-operated presenter view; printed output contains every slide.
+if ($('[data-slide]')) {
+  const slides = $$('[data-slide]');
+  let current = Math.max(0, Math.min(slides.length - 1, (Number(location.hash.replace('#slide-', '')) || 1) - 1));
+  function showSlide(index) {
+    current = Math.floor(Math.max(0, Math.min(slides.length - 1, index)));
+    slides.forEach((slide, i) => { slide.hidden = i !== current; });
+    $('#slide-count').textContent = `${current + 1} / ${slides.length}`;
+    $('#slide-prev').disabled = current === 0;
+    $('#slide-next').disabled = current === slides.length - 1;
+    history.replaceState(null, '', `#slide-${current + 1}`);
+  }
+  $('#slide-prev').addEventListener('click', () => showSlide(current - 1));
+  $('#slide-next').addEventListener('click', () => showSlide(current + 1));
+  document.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName)) return;
+    if (event.key === 'ArrowRight') { event.preventDefault(); showSlide(current + 1); }
+    if (event.key === 'ArrowLeft') { event.preventDefault(); showSlide(current - 1); }
+  });
+  showSlide(current);
+}
